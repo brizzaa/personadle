@@ -212,7 +212,7 @@ function App() {
                   month: "2-digit",
                 })}
               </div>
-              <div className="text-xs sm:text-sm text-yellow-300 font-semibold">
+              <div className="text-xs sm:text-sm text-[#FFF424] font-semibold">
                 {new Date()
                   .toLocaleDateString("en-US", {
                     weekday: "long",
@@ -269,10 +269,10 @@ function App() {
                   {currentPersona.resists &&
                     currentPersona.resists.length > 0 && (
                       <div>
-                        <div className="text-xs text-yellow-400 mb-1 text-center font-semibold hidden sm:block">
+                        <div className="text-xs text-[#FFF424] mb-1 text-center font-semibold hidden sm:block">
                           Resists
                         </div>
-                        <div className="text-xs text-yellow-400 mb-1 text-center font-semibold sm:hidden">
+                        <div className="text-xs text-[#FFF424] mb-1 text-center font-semibold sm:hidden">
                           Resist
                         </div>
                         <div className="grid grid-cols-3 gap-1 sm:gap-2">
@@ -321,7 +321,7 @@ function App() {
           <div className="mb-4 sm:mb-6 flex justify-center space-x-4">
             <button
               onClick={resetGame}
-              className="text-yellow-400 font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 border-4 sm:border-6 transform hover:scale-105 text-sm sm:text-base"
+              className="text-[#FFF424] font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 border-4 sm:border-6 transform hover:scale-105 text-sm sm:text-base"
               style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
             >
               New Game
@@ -364,7 +364,7 @@ function App() {
                   {Array.from(usedLetters).map((letter) => (
                     <span
                       key={letter}
-                      className="bg-yellow-400 text-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-xs sm:text-sm font-bold"
+                      className="bg-[#FFF424] text-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-xs sm:text-sm font-bold"
                     >
                       {letter.toUpperCase()}
                     </span>
@@ -383,7 +383,7 @@ function App() {
               className="text-center backdrop-blur-sm border-6 rounded-2xl p-12"
               style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
             >
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#FFF424] mx-auto mb-4"></div>
               <p className="text-xl font-semibold mb-2 text-white">
                 Loading Persona...
               </p>
@@ -392,7 +392,7 @@ function App() {
               </p>
               <div className="mt-4 w-full bg-gray-200 rounded-full h-2 mb-4">
                 <div
-                  className="bg-yellow-400 h-2 rounded-full animate-pulse"
+                  className="bg-[#FFF424] h-2 rounded-full animate-pulse"
                   style={{ width: "60%" }}
                 ></div>
               </div>
@@ -439,7 +439,7 @@ function App() {
 
                   <div className="mb-4 sm:hidden flex justify-center">
                     <div
-                      className="backdrop-blur-sm border-2 border-yellow-400 rounded p-2 mt-3"
+                      className="backdrop-blur-sm border-2 border-[#FFF424] rounded p-2 mt-3"
                       style={{ backgroundColor: "#202020", maxWidth: "200px" }}
                     >
                       <div className="flex gap-1 justify-center">
@@ -462,7 +462,7 @@ function App() {
                             }
                           }}
                           placeholder={`${currentPersona?.name.length || 0}`}
-                          className="w-20 px-1.5 bg-gray-800 text-white border border-yellow-400 rounded focus:outline-none text-center font-bold mobile-input text-xs"
+                          className="w-20 px-1.5 bg-gray-800 text-white border border-[#FFF424] rounded focus:outline-none text-center font-bold mobile-input text-xs"
                           style={{ fontSize: "14px" }}
                           maxLength={currentPersona?.name.length || 20}
                         />
@@ -472,7 +472,7 @@ function App() {
                             currentGuess.length === 0 ||
                             gameStatus !== "playing"
                           }
-                          className="px-1.5 bg-yellow-400 text-black font-bold rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-300 transition-colors text-xs"
+                          className="px-1.5 bg-[#FFF424] text-black font-bold rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-300 transition-colors text-xs"
                         >
                           Guess!
                         </button>
@@ -499,7 +499,7 @@ function App() {
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 border-2 border-yellow-400 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 border-2 border-[#FFF424] shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Reload Page
                 </button>

@@ -16,13 +16,13 @@ const GuessTile = ({ letter, status }: GuessTileProps) => {
   const getStatusColor = () => {
     switch (status) {
       case "correct":
-        return "bg-green-600 border-2 border-yellow-400";
+        return "bg-green-600 border-2 border-[#FFF424]";
       case "present":
-        return "bg-yellow-500 border-2 border-yellow-400";
+        return "bg-yellow-500 border-2 border-[#FFF424]";
       case "absent":
-        return "bg-gray-600 border-2 border-yellow-400";
+        return "bg-gray-600 border-2 border-[#FFF424]";
       default:
-        return "bg-gray-300 border-2 border-yellow-400";
+        return "bg-gray-300 border-2 border-[#FFF424]";
     }
   };
 
