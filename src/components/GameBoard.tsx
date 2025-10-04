@@ -28,7 +28,7 @@ const GuessTile = ({ letter, status }: GuessTileProps) => {
 
   return (
     <div
-      className={`min-w-10 w-10 h-10 flex items-center justify-center text-white font-bold text-sm rounded-lg border-2 ${getStatusColor()} transition-all duration-500 transform hover:scale-105 flex-shrink-0`}
+      className={`min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-white font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 ${getStatusColor()} transition-all duration-500 transform hover:scale-105 flex-shrink-0`}
     >
       {letter}
     </div>
@@ -67,7 +67,7 @@ const GameBoard = ({
     ];
 
     return (
-      <div key={index} className="flex gap-2 justify-center flex-wrap">
+      <div key={index} className="flex gap-1 sm:gap-2 justify-center flex-wrap">
         {paddedLetters.map((letter, letterIndex) => (
           <GuessTile
             key={letterIndex}
@@ -87,10 +87,10 @@ const GameBoard = ({
 
   return (
     <div className="w-full">
-      <h2 className="text-lg font-bold mb-6 text-center text-white">
+      <h2 className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-center text-white">
         Your attempts
       </h2>
-      <div className="space-y-3 flex flex-col items-center">
+      <div className="space-y-2 sm:space-y-3 flex flex-col items-center">
         {guesses.map((guess, index) => renderRow(guess, index))}
         {currentGuess && renderRow(currentGuess, guesses.length, true)}
         {Array.from(

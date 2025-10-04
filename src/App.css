@@ -259,3 +259,54 @@ body {
   transform: rotateY(10deg) rotateX(5deg);
   transition: transform 0.3s ease;
 }
+
+@media (max-width: 640px) {
+  button,
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  .mobile-spacing {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  .mobile-input {
+    font-size: 16px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .mobile-input::placeholder {
+    color: #9ca3af;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+}
+
+@media (max-width: 896px) and (orientation: landscape) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .landscape-text-sm {
+    font-size: 0.875rem;
+  }
+}

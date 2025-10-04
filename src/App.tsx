@@ -196,9 +196,9 @@ function App() {
       <ColorStripes />
 
       <header className="relative z-10">
-        <div className="absolute top-4 right-4 space-y-4">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 space-y-2 sm:space-y-4">
           <div
-            className="backdrop-blur-sm border-6 rounded-xl p-4"
+            className="backdrop-blur-sm border-4 sm:border-6 rounded-lg sm:rounded-xl p-2 sm:p-4"
             style={{
               borderColor: "#FFF424",
               backgroundColor: "#202020",
@@ -206,13 +206,13 @@ function App() {
             }}
           >
             <div className="text-center">
-              <div className="text-lg font-bold text-white">
+              <div className="text-sm sm:text-lg font-bold text-white">
                 {new Date().toLocaleDateString("en-US", {
                   day: "2-digit",
                   month: "2-digit",
                 })}
               </div>
-              <div className="text-sm text-yellow-300 font-semibold">
+              <div className="text-xs sm:text-sm text-yellow-300 font-semibold">
                 {new Date()
                   .toLocaleDateString("en-US", {
                     weekday: "long",
@@ -227,22 +227,28 @@ function App() {
               (currentPersona.resists &&
                 currentPersona.resists.length > 0)) && (
               <div
-                className="backdrop-blur-sm border-6 rounded-xl p-3"
+                className="backdrop-blur-sm border-4 sm:border-6 rounded-lg sm:rounded-xl p-2 sm:p-3"
                 style={{
                   borderColor: "#FFF424",
                   backgroundColor: "#202020",
                   color: "#202020",
                 }}
               >
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   {currentPersona.weak && currentPersona.weak.length > 0 && (
                     <div>
-                      <div className="text-xs text-red-400 mb-1 text-center font-semibold">
+                      <div className="text-xs text-red-400 mb-1 text-center font-semibold hidden sm:block">
                         Weaknesses
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="text-xs text-red-400 mb-1 text-center font-semibold sm:hidden">
+                        Weak
+                      </div>
+                      <div className="grid grid-cols-3 gap-1 sm:gap-2">
                         {currentPersona.weak.map((element) => (
-                          <div key={element} className="w-15 h-15">
+                          <div
+                            key={element}
+                            className="w-8 h-8 sm:w-15 sm:h-15"
+                          >
                             <div
                               className="w-full h-full rounded"
                               style={{
@@ -263,12 +269,18 @@ function App() {
                   {currentPersona.resists &&
                     currentPersona.resists.length > 0 && (
                       <div>
-                        <div className="text-xs text-yellow-400 mb-1 text-center font-semibold">
+                        <div className="text-xs text-yellow-400 mb-1 text-center font-semibold hidden sm:block">
                           Resists
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="text-xs text-yellow-400 mb-1 text-center font-semibold sm:hidden">
+                          Resist
+                        </div>
+                        <div className="grid grid-cols-3 gap-1 sm:gap-2">
                           {currentPersona.resists.map((element) => (
-                            <div key={element} className="w-15 h-15">
+                            <div
+                              key={element}
+                              className="w-8 h-8 sm:w-15 sm:h-15"
+                            >
                               <div
                                 className="w-full h-full rounded"
                                 style={{
@@ -290,26 +302,26 @@ function App() {
             )}
         </div>
 
-        <div className="text-center pt-8 pb-6 px-4">
+        <div className="text-center pt-4 sm:pt-8 pb-4 sm:pb-6 px-4">
           <div className="relative inline-block">
             <h1
-              className="text-7xl md:text-8xl font-bold mb-2 transform hover:scale-105 transition-transform duration-300"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 transform hover:scale-105 transition-transform duration-300"
               style={{ color: "#202020" }}
             >
               PERSONADLE
             </h1>
           </div>
           <p
-            className="text-xl md:text-2xl mb-6 font-medium"
+            className="text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 font-medium"
             style={{ color: "#202020" }}
           >
             Guess the Persona!
           </p>
 
-          <div className="mb-6 flex justify-center space-x-4">
+          <div className="mb-4 sm:mb-6 flex justify-center space-x-4">
             <button
               onClick={resetGame}
-              className="text-yellow-400 font-bold py-3 px-6 rounded-xl transition-all duration-300 border-6 transform hover:scale-105"
+              className="text-yellow-400 font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 border-4 sm:border-6 transform hover:scale-105 text-sm sm:text-base"
               style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
             >
               New Game
@@ -317,15 +329,15 @@ function App() {
           </div>
 
           {gameStatus === "playing" && (
-            <div className="flex justify-center items-center space-x-4 mb-4">
-              <span className="text-lg font-semibold text-black">
+            <div className="flex justify-center items-center space-x-2 sm:space-x-4 mb-4">
+              <span className="text-sm sm:text-lg font-semibold text-black">
                 Attempts:
               </span>
-              <div className="flex space-x-2">
+              <div className="flex space-x-1 sm:space-x-2">
                 {Array.from({ length: maxAttempts }, (_, i) => (
                   <div
                     key={i}
-                    className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                    className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-300 ${
                       i < attempts
                         ? "bg-red-500 scale-110 shadow-lg"
                         : "bg-gray-300 hover:bg-gray-400"
@@ -333,7 +345,7 @@ function App() {
                   />
                 ))}
               </div>
-              <span className="text-lg font-semibold text-black">
+              <span className="text-sm sm:text-lg font-semibold text-black">
                 {attempts}/{maxAttempts}
               </span>
             </div>
@@ -342,17 +354,17 @@ function App() {
           {usedLetters.size > 0 && gameStatus === "playing" && (
             <div className="mb-4 flex justify-center">
               <div
-                className="backdrop-blur-sm border-6 rounded-xl p-4 w-4/5 max-w-2xl"
+                className="backdrop-blur-sm border-4 sm:border-6 rounded-lg sm:rounded-xl p-3 sm:p-4 w-11/12 sm:w-4/5 max-w-2xl"
                 style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
               >
-                <div className="text-sm font-bold text-white mb-2 text-center">
+                <div className="text-xs sm:text-sm font-bold text-white mb-2 text-center">
                   Used letters:
                 </div>
-                <div className="flex flex-wrap justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
                   {Array.from(usedLetters).map((letter) => (
                     <span
                       key={letter}
-                      className="bg-yellow-400 text-black px-2 py-1 rounded text-sm font-bold"
+                      className="bg-yellow-400 text-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-xs sm:text-sm font-bold"
                     >
                       {letter.toUpperCase()}
                     </span>
@@ -364,7 +376,7 @@ function App() {
         </div>
       </header>
 
-      <main className="relative z-10 px-4 pb-16">
+      <main className="relative z-10 px-2 sm:px-4 pb-24 sm:pb-16">
         {isLoading ? (
           <div className="flex justify-center items-center min-h-96">
             <div
@@ -387,15 +399,15 @@ function App() {
             </div>
           </div>
         ) : currentPersona ? (
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 xl:gap-12">
+          <div className="max-w-7xl mx-auto px-2 sm:px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 xl:gap-12">
               <div className="animate-fade-in-up flex justify-center lg:justify-start">
                 <div
-                  className="backdrop-blur-sm border-6 rounded-2xl p-4 lg:p-6 hover-lift w-full max-w-sm lg:max-w-none"
+                  className="backdrop-blur-sm border-4 sm:border-6 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 hover-lift w-full max-w-xs sm:max-w-sm lg:max-w-none"
                   style={{
                     borderColor: "#FFF424",
                     backgroundColor: "#202020",
-                    minHeight: "400px",
+                    minHeight: "300px sm:minHeight: 400px",
                   }}
                 >
                   <PersonaInfo persona={currentPersona} />
@@ -407,7 +419,7 @@ function App() {
                 style={{ animationDelay: "0.2s" }}
               >
                 <div
-                  className="backdrop-blur-sm border-6 rounded-2xl p-4 lg:p-6 w-full max-w-sm lg:max-w-lg hover-lift"
+                  className="backdrop-blur-sm border-4 sm:border-6 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 w-full max-w-xs sm:max-w-sm lg:max-w-lg hover-lift"
                   style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
                 >
                   {currentPersona && (
@@ -424,6 +436,49 @@ function App() {
                     maxAttempts={maxAttempts}
                     currentPersona={currentPersona}
                   />
+
+                  <div className="mb-4 sm:hidden flex justify-center">
+                    <div
+                      className="backdrop-blur-sm border-2 border-yellow-400 rounded p-2 mt-3"
+                      style={{ backgroundColor: "#202020", maxWidth: "200px" }}
+                    >
+                      <div className="flex gap-1 justify-center">
+                        <input
+                          type="text"
+                          value={currentGuess}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (
+                              value.length <=
+                                (currentPersona?.name.length || 20) &&
+                              /^[a-zA-Z\s]*$/.test(value)
+                            ) {
+                              setCurrentGuess(value);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleGuess();
+                            }
+                          }}
+                          placeholder={`${currentPersona?.name.length || 0}`}
+                          className="w-20 px-1.5 bg-gray-800 text-white border border-yellow-400 rounded focus:outline-none text-center font-bold mobile-input text-xs"
+                          style={{ fontSize: "14px" }}
+                          maxLength={currentPersona?.name.length || 20}
+                        />
+                        <button
+                          onClick={handleGuess}
+                          disabled={
+                            currentGuess.length === 0 ||
+                            gameStatus !== "playing"
+                          }
+                          className="px-1.5 bg-yellow-400 text-black font-bold rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-300 transition-colors text-xs"
+                        >
+                          Guess!
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -454,8 +509,8 @@ function App() {
         )}
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full h-10 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center overflow-hidden shadow-2xl z-50">
-        <div className="text-white font-bold text-3xl scroll-animation whitespace-nowrap flex items-center">
+      <div className="fixed bottom-0 left-0 w-full h-8 sm:h-10 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center overflow-hidden shadow-2xl z-50">
+        <div className="text-white font-bold text-xl sm:text-3xl scroll-animation whitespace-nowrap flex items-center">
           personadle personadle personadle personadle personadle personadle
           personadle personadle personadle personadle personadle personadle
           personadle personadle personadle personadle personadle personadle
