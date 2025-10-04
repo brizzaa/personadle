@@ -4,6 +4,8 @@
 
 A word puzzle game inspired by Wordle, but with a twist - you're guessing Persona characters from the beloved Shin Megami Tensei series! Each game brings a new challenge as you try to identify the mysterious Persona using hints about their affinities, weaknesses, and characteristics.
 
+
+
 ## How to Play
 
 1. **Guess the Persona** - Type your guess and press Enter =)
@@ -16,9 +18,10 @@ A word puzzle game inspired by Wordle, but with a twist - you're guessing Person
 - **Affinity System** - Visual hints with elemental weaknesses and resistances
 - **Clean UI** - modern design with smooth animations
 - **Responsive** - Works both on desktop and mobile
-- **Rich Database** - Hundreds of Personas to guess!
+- **Rich Database** - Hundreds of Personas to be guessed!
 - **Progressive Hints** - Get letter hints as you make more attempts
 
+-- **SEO** is optimized by a.i.(soon i'll optimize it myself because some areas are not covered at all ._.)
 ## Tech Stack
 
 This project is built with the following web technologies:
@@ -90,16 +93,6 @@ npm install
 
 # Start development server
 npm run dev
-```
-
-### Build for Production
-
-```bash
-# Create production build
-npm run build
-
-# Preview production build
-npm run preview
 ```
 
 Found a bug or want to add a feature? Feel free to:
