@@ -114,4 +114,4 @@ Found a bug or want to add a feature? Feel free to:
 This project is for educational and entertainment purposes. All Persona characters and related content are property of Atlus.
 I also want to thank luyluish, the owner of the Persona Compendium API: https://github.com/luyluish/persona-compendium for exposing all of the data in which my game's based on.
 
-<img src="https://media1.tenor.com/m/l5NzL2YP8aMAAAAd/narukami.gif" width="900" height="120" />
+<img src="https://media1.tenor.com/m/l5NzL2YP8aMAAAAd/narukami.gif" width="200" height="200"/>
