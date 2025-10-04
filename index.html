@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/SiteIcon.png" />
+    <link rel="apple-touch-icon" href="/SiteIcon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+
+    <title>Personadle - Persona Wordle Game | Guess the Persona Puzzle</title>
+    <meta
+      name="description"
+      content="Play Personadle - the ultimate Persona Wordle game! Guess the Persona in 6 tries. Puzzle game with Shin Megami Tensei characters. Free Persona word game inspired by Wordle."
+    />
+    <meta
+      name="keywords"
+      content="personadle, persona wordle, persona game, guess the persona, persona puzzle, wordle clone, puzzle game, shin megami tensei, atlus, persona characters, joker persona, persona guessing game, free word game, persona challenge, smt game, megami tensei, persona rpg, wordle game, puzzle game, guess game, word puzzle"
+    />
+    <meta name="author" content="Personadle Team" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://personadle.vercel.app" />
+
+    <!-- Language and Region - Global -->
+    <meta name="language" content="English" />
+    <meta name="geo.region" content="Global" />
+    <meta name="geo.country" content="Worldwide" />
+
+    <!-- Hreflang for international targeting -->
+    <link rel="alternate" hreflang="en" href="https://personadle.vercel.app" />
+    <link
+      rel="alternate"
+      hreflang="it"
+      href="https://personadle.vercel.app/?lang=it"
+    />
+    <link
+      rel="alternate"
+      hreflang="ja"
+      href="https://personadle.vercel.app/?lang=ja"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://personadle.vercel.app"
+    />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#1a1a2e" />
+    <meta name="msapplication-TileColor" content="#1a1a2e" />
+
+    <!-- Google Site Verification -->
+    <meta
+      name="google-site-verification"
+      content="PlCgL5drqP2eOUo2OygrAVdBzwhPWjJZ-UEWW-ejBa4"
+    />
+
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-042HEFVXE0"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-042HEFVXE0", {
+        page_title: "Personadle - Persona Wordle Game",
+        page_location: "https://personadle.vercel.app",
+        custom_map: {
+          custom_parameter_1: "game_type",
+          custom_parameter_2: "persona_series",
+          custom_parameter_3: "language",
+          custom_parameter_4: "keywords",
+        },
+      });
+
+      gtag("event", "page_view", {
+        page_title: "Personadle - Persona Wordle Game",
+        page_location: "https://personadle.vercel.app",
+        content_group1: "persona_wordle_game",
+        content_group2: "puzzle_game",
+        custom_parameter_4:
+          "persona_wordle,persona_game,guess_the_persona,wordle_clone",
+      });
+    </script>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Personadle" />
+    <meta
+      property="og:title"
+      content="Personadle - Persona Wordle Game | Guess the Persona Puzzle"
+    />
+    <meta
+      property="og:description"
+      content="Play Personadle - the ultimate Persona Wordle game! Guess the Persona in 6 tries. Puzzle game with Shin Megami Tensei characters. Free Persona word game inspired by Wordle."
+    />
+    <meta
+      property="og:image"
+      content="https://personadle.vercel.app/SiteIcon.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Personadle - Persona Puzzle Game" />
+    <meta property="og:url" content="https://personadle.vercel.app" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="it_IT" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@personadle" />
+    <meta name="twitter:creator" content="@personadle" />
+    <meta
+      name="twitter:title"
+      content="Personadle - Persona Wordle Game | Guess the Persona Puzzle"
+    />
+    <meta
+      name="twitter:description"
+      content="Play Personadle - the ultimate Persona Wordle game! Guess the Persona in 6 tries. Puzzle game with Shin Megami Tensei characters. Free Persona word game inspired by Wordle."
+    />
+    <meta
+      name="twitter:image"
+      content="https://personadle.vercel.app/SiteIcon.png"
+    />
+    <meta name="twitter:image:alt" content="Personadle - Persona Puzzle Game" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Personadle",
+        "alternateName": "Persona Wordle Game",
+        "description": "Play Personadle - the ultimate Persona Wordle game! Guess the Persona in 6 tries. Puzzle game with Shin Megami Tensei characters. Free Persona word game inspired by Wordle.",
+        "url": "https://personadle.vercel.app",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "Personadle Team"
+        },
+        "genre": ["Puzzle", "Word Game", "Guessing Game"],
+        "keywords": "personadle, persona wordle, persona game, guess the persona, persona puzzle, wordle clone, puzzle game, shin megami tensei, atlus, persona characters, joker persona, persona guessing game, free word game, persona challenge, smt game, megami tensei, persona rpg, wordle game, puzzle game, guess game, word puzzle",
+        "inLanguage": ["en", "it", "ja"],
+        "availableLanguage": ["English", "Italian", "Japanese"],
+        "isAccessibleForFree": true,
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "softwareVersion": "1.0",
+        "datePublished": "2024-01-01",
+        "dateModified": "2024-12-19",
+        "sameAs": ["https://personadle.vercel.app"],
+        "game": {
+          "@type": "Game",
+          "name": "Personadle",
+          "description": "Guess the Persona in 6 attempts - each game features a random Persona",
+          "genre": "Puzzle Game",
+          "gamePlatform": "Web Browser",
+          "numberOfPlayers": 1,
+          "playMode": "SinglePlayer"
+        }
+      }
+    </script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Personadle" />
+
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
+    <!-- Preload critical resources for LCP optimization -->
+    <link rel="preload" href="/SiteIcon.png" as="image" type="image/png" />
+    <link
+      rel="preload"
+      href="/fonts/fonnts.com-MinervaModern_Regular.otf"
+      as="font"
+      type="font/otf"
+      crossorigin
+    />
+
+    <!-- Preload critical CSS -->
+    <link rel="preload" href="/src/App.css" as="style" />
+
+    <!-- Resource hints for better performance -->
+    <link rel="prefetch" href="/icons/" />
+    <link rel="prefetch" href="/personas.json" />
+
+    <!-- Image optimization hints -->
+    <meta name="image-preload" content="/SiteIcon.png" />
+
+    <!-- Critical resource loading optimization -->
+    <link rel="modulepreload" href="/src/main.tsx" />
+    <link rel="modulepreload" href="/src/App.tsx" />
+  </head>
+  <body>
+    <!-- SEO Heading Structure for Search Engines -->
+    <div style="display: none">
+      <h1>Personadle - Persona Wordle Game</h1>
+      <h2>Guess the Persona Puzzle Game</h2>
+      <h3>Free Persona Wordle Clone with Shin Megami Tensei Characters</h3>
+      <h4>Play Persona Word Game - Puzzle Challenge</h4>
+      <h5>Persona Guessing Game Inspired by Wordle</h5>
+    </div>
+
+    <div id="root"></div>
+
+    <!-- Optimized script loading -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Performance monitoring and optimization -->
+    <script>
+      if ("loading" in HTMLImageElement.prototype) {
+        const images = document.querySelectorAll("img[data-src]");
+        images.forEach((img) => {
+          img.src = img.dataset.src;
+          img.removeAttribute("data-src");
+        });
+      } else {
+        const script = document.createElement("script");
+        script.src =
+          "https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver";
+        document.head.appendChild(script);
+      }
+
+      function preloadNextGenImages() {
+        const formats = ["webp", "avif"];
+        const baseImages = [
+          "/SiteIcon.png",
+          "/icons/Ailment.png",
+          "/icons/Fire.png",
+        ];
+
+        formats.forEach((format) => {
+          baseImages.forEach((image) => {
+            const link = document.createElement("link");
+            link.rel = "preload";
+            link.as = "image";
+            link.href = image.replace(".png", `.${format}`);
+            link.type = `image/${format}`;
+            document.head.appendChild(link);
+          });
+        });
+      }
+
+      window.addEventListener("load", () => {
+        preloadNextGenImages();
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const criticalImages = ["/SiteIcon.png"];
+        criticalImages.forEach((src) => {
+          const img = new Image();
+          img.src = src;
+        });
+      });
+    </script>
+  </body>
+</html>
