@@ -21,7 +21,7 @@ const PersonaCard = ({ persona }: PersonaCardProps) => {
             />
           </div>
           <h3 className="text-xl font-bold mb-2">{persona.name}</h3>
-          <div className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold">
+          <div className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-[#FFF424] to-yellow-600 text-white font-semibold">
             {persona.arcana}
           </div>
           <p className="text-sm text-gray-300 mt-2">Level {persona.level}</p>
