@@ -72,29 +72,6 @@ Displays the final result with character information and restart functionality.
 
 Manages the complex elemental system with visual icons and color coding for different damage types.
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/personadle.git
-
-# Navigate to project directory
-cd personadle
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
 Found a bug or want to add a feature? Feel free to:
 
 1. Fork the repository
