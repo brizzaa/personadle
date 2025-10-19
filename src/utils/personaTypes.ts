@@ -1,4 +1,3 @@
-
 // serve per le icone delle persone
 export interface PersonaType {
   name: string;
@@ -13,6 +12,24 @@ export const personaTypes: { [key: string]: PersonaType } = {
     color: "#8B4513",
     bgColor: "#D2B48C",
     icon: "Strike",
+  },
+  Strike: {
+    name: "Strike",
+    color: "#8B4513",
+    bgColor: "#D2B48C",
+    icon: "Strike",
+  },
+  Slash: {
+    name: "Slash",
+    color: "#DC143C",
+    bgColor: "#FFB6C1",
+    icon: "Slash",
+  },
+  Pierce: {
+    name: "Pierce",
+    color: "#4B5563",
+    bgColor: "#E5E7EB",
+    icon: "Pierce",
   },
   Fire: {
     name: "Fire",
@@ -64,6 +81,12 @@ export const personaTypes: { [key: string]: PersonaType } = {
   },
   Divine: {
     name: "Divine",
+    color: "#7C2D12",
+    bgColor: "#FEF3C7",
+    icon: "Almighty",
+  },
+  Almighty: {
+    name: "Almighty",
     color: "#7C2D12",
     bgColor: "#FEF3C7",
     icon: "Almighty",

@@ -201,7 +201,7 @@ function App() {
               color: "#202020",
             }}
           >
-            <div className="flex items-center justify-around">
+            <div className="flex items-center justify-around w-full">
               <div className="text-sm sm:text-lg font-bold text-white">
                 {new Date().toLocaleDateString("en-US", {
                   day: "2-digit",
@@ -504,17 +504,48 @@ function App() {
         )}
       </main>
 
-      <footer className="bottom-8 sm:bottom-10 left-0 w-full z-40 pb-2 sm:pb-3 mb-[2rem]">
-        <div className="text-center text-[10px] sm:text-xs md:text-sm text- font-normal">
-          all credits to Atlus™; also thanks to{" "}
-          <a
-            className="underline hover:text-red-600 transition-colors font-semibold"
-            href="https://megatenwiki.com/wiki/Main_Page"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            megatenwiki (images)
-          </a>
+      <footer className="relative w-full z-40 pb-10 sm:pb-12 md:pb-14 sm:px-6">
+        <div>
+          <div className="text-center text-[9px] sm:text-[11px] md:text-xs lg:text-sm text-[#202020] font-normal leading-relaxed space-y-1 sm:space-y-2">
+            <div>
+              All credits to <span className="font-semibold">Atlus™</span>; also
+              thanks to{" "}
+              <a
+                className="underline hover:text-red-600 transition-colors font-semibold"
+                href="https://megatenwiki.com/wiki/Main_Page"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                megatenwiki
+              </a>{" "}
+              (images).
+              <div>
+                Also a huge thanks to{" "}
+                <a
+                  className="underline font-bold hover:text-red-600 transition-colors"
+                  href="https://github.com/luyluish/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LuyLuish
+                </a>{" "}
+                for exposing the API for the informations about the Personas!
+              </div>
+              <div>
+                This project is{" "}
+                <a
+                  href="https://github.com/brizzaa/personadle"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-red-600 transition-colors font-semibold"
+                >
+                  open-source!
+                </a>{" "}
+                If you want to contribute feel free to copy the repo and send a
+                PR!
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
 
