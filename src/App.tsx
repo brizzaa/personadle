@@ -65,25 +65,20 @@ function App() {
   useEffect(() => {
     const loadPersonas = async () => {
       try {
-        console.log("📁 Loading personas from local data...");
         const response = await fetch("/personas.json");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
 
-        console.log("✅ Local data loaded:", data.length, "personas");
-        console.log("✅ First persona:", data[0]);
         setPersonas(data);
 
         const randomIndex = Math.floor(Math.random() * data.length);
         const selectedPersona = data[randomIndex];
-        console.log("✅ Selected persona:", selectedPersona);
-        console.log("✅ Selected persona image:", selectedPersona.image);
+
         setCurrentPersona(selectedPersona);
         setIsLoading(false);
       } catch (error) {
-        console.error("Errore nel caricamento dei dati locali:", error);
         const fallbackPersonas = [
           {
             id: 1,
@@ -196,6 +191,7 @@ function App() {
       <ColorStripes />
 
       <header className="relative z-10">
+        {/* Date and stats box - top right */}
         <div className="absolute top-2 right-2 sm:top-4 sm:right-4 space-y-2 sm:space-y-4">
           <div
             className="backdrop-blur-sm border-4 sm:border-6 rounded-lg sm:rounded-xl p-2 sm:p-4"
@@ -508,7 +504,21 @@ function App() {
         )}
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full h-8 sm:h-10 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center overflow-hidden shadow-2xl z-50">
+      <footer className="bottom-8 sm:bottom-10 left-0 w-full z-40 pb-2 sm:pb-3 mb-[2rem]">
+        <div className="text-center text-[10px] sm:text-xs md:text-sm text- font-normal">
+          all credits to Atlus™; also thanks to{" "}
+          <a
+            className="underline hover:text-red-600 transition-colors font-semibold"
+            href="https://megatenwiki.com/wiki/Main_Page"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            megatenwiki (images)
+          </a>
+        </div>
+      </footer>
+
+      <div className="fixed bottom-0 left-0 w-full h-8 sm:h-10 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center overflow-hidden shadow-2xl z-50 pointer-events-none">
         <div className="text-white font-bold text-xl sm:text-3xl scroll-animation whitespace-nowrap flex items-center">
           personadle personadle personadle personadle personadle personadle
           personadle personadle personadle personadle personadle personadle
