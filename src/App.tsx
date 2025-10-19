@@ -135,7 +135,7 @@ function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentGuess, gameStatus]);
+  }, [currentGuess, gameStatus, currentPersona]);
 
   const handleGuess = () => {
     if (currentGuess.length === 0 || gameStatus !== "playing") return;
@@ -205,7 +205,7 @@ function App() {
               color: "#202020",
             }}
           >
-            <div className="text-center">
+            <div className="flex items-center justify-around">
               <div className="text-sm sm:text-lg font-bold text-white">
                 {new Date().toLocaleDateString("en-US", {
                   day: "2-digit",
@@ -305,14 +305,14 @@ function App() {
         <div className="text-center pt-4 sm:pt-8 pb-4 sm:pb-6 px-4">
           <div className="relative inline-block">
             <h1
-              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 transform hover:scale-105 transition-transform duration-300"
+              className="sm:text-4xl md:text-2xl lg:text-[6rem] font-bold  transform transition-transform "
               style={{ color: "#202020" }}
             >
               PERSONADLE
             </h1>
           </div>
           <p
-            className="text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 font-medium"
+            className="text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 font-bold"
             style={{ color: "#202020" }}
           >
             Guess the Persona!
@@ -321,7 +321,7 @@ function App() {
           <div className="mb-4 sm:mb-6 flex justify-center space-x-4">
             <button
               onClick={resetGame}
-              className="text-[#FFF424] font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 border-4 sm:border-6 transform hover:scale-105 text-sm sm:text-base"
+              className="text-[#FFF424] font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-50 border-4 sm:border-6 transform hover:scale-105 text-sm sm:text-base"
               style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
             >
               New Game
@@ -337,7 +337,7 @@ function App() {
                 {Array.from({ length: maxAttempts }, (_, i) => (
                   <div
                     key={i}
-                    className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-300 ${
+                    className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-100 hover:scale-150 ${
                       i < attempts
                         ? "bg-red-500 scale-110 shadow-lg"
                         : "bg-gray-300 hover:bg-gray-400"
@@ -399,15 +399,14 @@ function App() {
             </div>
           </div>
         ) : currentPersona ? (
-          <div className="max-w-7xl mx-auto px-2 sm:px-4">
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 mt-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 xl:gap-12">
               <div className="animate-fade-in-up flex justify-center lg:justify-start">
                 <div
-                  className="backdrop-blur-sm border-4 sm:border-6 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 hover-lift w-full max-w-xs sm:max-w-sm lg:max-w-none"
+                  className="backdrop-blur-sm border-4 sm:border-6 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 hover-lift w-full max-w-xs sm:max-w-sm lg:max-w-none min-h-[300px] sm:min-h-[400px]"
                   style={{
                     borderColor: "#FFF424",
                     backgroundColor: "#202020",
-                    minHeight: "300px sm:minHeight: 400px",
                   }}
                 >
                   <PersonaInfo persona={currentPersona} />
@@ -494,7 +493,7 @@ function App() {
                 <h2 className="text-2xl font-bold mb-4 text-red-400">
                   Loading Error
                 </h2>
-                <p className="mb-6" style={{ color: "#202020" }}>
+                <p className="mb-6 text-white">
                   It was not possible to load the data of the Persona.
                 </p>
                 <button

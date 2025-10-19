@@ -28,7 +28,7 @@ const GuessTile = ({ letter, status }: GuessTileProps) => {
 
   return (
     <div
-      className={`min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-white font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 ${getStatusColor()} transition-all duration-500 transform hover:scale-105 flex-shrink-0`}
+      className={`min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-white font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-6 ${getStatusColor()} transition-all duration-100 transform hover:scale-125 flex-shrink-0`}
     >
       {letter}
     </div>

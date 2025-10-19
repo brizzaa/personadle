@@ -91,7 +91,9 @@ const PersonaImage: React.FC<PersonaImageProps> = ({
 
   if (hasError) {
     return (
-      <div className={`${className} bg-black flex items-center justify-center`}>
+      <div
+        className={`${className} bg-[#202020] flex items-center justify-center`}
+      >
         <div className="text-center text-white">
           <div className="text-sm font-bold">Persona</div>
           <div className="text-xs opacity-75">Image not available</div>

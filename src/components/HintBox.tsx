@@ -26,7 +26,7 @@ const HintBox = ({ persona, progressiveHint, gameStatus }: HintBoxProps) => {
           {hintLetters.map((letter, index) => (
             <div
               key={`hint-${index}`}
-              className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-black font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-[#FFF424] bg-[#FFF424] transition-all duration-500 transform hover:scale-105 flex-shrink-0"
+              className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-black font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-[#FFF424] bg-[#FFF424] transition-all duration-200 transform hover:scale-105 flex-shrink-0"
             >
               {letter}
             </div>
