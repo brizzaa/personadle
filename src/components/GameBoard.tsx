@@ -1,4 +1,5 @@
 import type { Persona } from "../types/Persona";
+import { useMemo } from "react";
 
 interface GameBoardProps {
   guesses: string[];
@@ -41,21 +42,20 @@ const GameBoard = ({
   maxAttempts,
   currentPersona,
 }: GameBoardProps) => {
+  const targetName = useMemo(
+    () => currentPersona.name.toLowerCase(),
+    [currentPersona.name]
+  );
+
   const getLetterStatus = (
     letter: string,
-    position: number,
-    _guess: string
+    position: number
   ): "correct" | "present" | "absent" => {
-    const targetName = currentPersona.name.toLowerCase();
     const letterLower = letter.toLowerCase();
-
     if (targetName[position] === letterLower) {
       return "correct";
-    } else if (targetName.includes(letterLower)) {
-      return "present";
-    } else {
-      return "absent";
     }
+    return targetName.includes(letterLower) ? "present" : "absent";
   };
 
   const renderRow = (guess: string, index: number, isCurrent = false) => {
@@ -76,7 +76,7 @@ const GameBoard = ({
               isCurrent
                 ? "empty"
                 : letter
-                ? getLetterStatus(letter, letterIndex, guess)
+                ? getLetterStatus(letter, letterIndex)
                 : "empty"
             }
           />

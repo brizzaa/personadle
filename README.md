@@ -4,8 +4,6 @@
 
 A word puzzle game inspired by Wordle, but with a twist - you're guessing Persona characters from the beloved Shin Megami Tensei series! Each game brings a new challenge as you try to identify the mysterious Persona using hints about their affinities, weaknesses, and characteristics.
 
-
-
 ## How to Play
 
 1. **Guess the Persona** - Type your guess and press Enter =)
@@ -21,7 +19,8 @@ A word puzzle game inspired by Wordle, but with a twist - you're guessing Person
 - **Rich Database** - Hundreds of Personas to be guessed!
 - **Progressive Hints** - Get letter hints as you make more attempts
 
--- **SEO** is optimized by a.i.(soon i'll optimize it myself because some areas are not covered at all ._.)
+-- **SEO** is optimized by a.i.(soon i'll optimize it myself because some areas are not covered at all .\_.)
+
 ## Tech Stack
 
 This project is built with the following web technologies:

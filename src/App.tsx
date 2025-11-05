@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import GameBoard from "./components/GameBoard";
 import PersonaInfo from "./components/PersonaInfo";
 import PersonaModal from "./components/PersonaModal";
@@ -24,48 +24,33 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const maxAttempts = 6;
 
-  const generateProgressiveHint = (persona: Persona, attempts: number) => {
-    if (!persona || attempts <= 0) return "";
-
+  const updateProgressiveHint = (persona: Persona, nextAttempts: number) => {
+    if (!persona || nextAttempts <= 0) return;
     const nameLength = persona.name.length;
+    if (nameLength < 5 && nextAttempts % 2 !== 0) return;
 
-    if (nameLength < 5 && attempts % 2 !== 0) {
-      return progressiveHint;
-    }
-
-    const availablePositions = [];
-    for (let i = 0; i < nameLength; i++) {
-      if (!hintPositions.includes(i)) {
-        availablePositions.push(i);
+    setHintPositions((prev) => {
+      const availablePositions: number[] = [];
+      for (let i = 0; i < nameLength; i++) {
+        if (!prev.includes(i)) availablePositions.push(i);
       }
-    }
-
-    if (availablePositions.length === 0) return progressiveHint;
-
-    const randomIndex = Math.floor(Math.random() * availablePositions.length);
-    const newPosition = availablePositions[randomIndex];
-
-    const newHintPositions = [...hintPositions, newPosition].sort(
-      (a, b) => a - b
-    );
-    setHintPositions(newHintPositions);
-
-    let hint = "";
-    for (let i = 0; i < nameLength; i++) {
-      if (newHintPositions.includes(i)) {
-        hint += persona.name[i];
-      } else {
-        hint += "_";
-      }
-    }
-
-    return hint;
+      if (availablePositions.length === 0) return prev;
+      const randomIndex = Math.floor(Math.random() * availablePositions.length);
+      const newPosition = availablePositions[randomIndex];
+      const next = [...prev, newPosition].sort((a, b) => a - b);
+      return next;
+    });
   };
 
   useEffect(() => {
     const loadPersonas = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch("/personas.json");
+        const response = await fetch("/personas.json", {
+          signal: controller.signal,
+          cache: "force-cache",
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -105,57 +90,34 @@ function App() {
         setPersonas(fallbackPersonas);
         setCurrentPersona(fallbackPersonas[0]);
         setIsLoading(false);
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
 
     loadPersonas();
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleGuess();
-      } else if (event.key === "Backspace") {
-        setCurrentGuess(currentGuess.slice(0, -1));
-      } else if (event.key === " ") {
-        if (currentGuess.length < (currentPersona?.name.length || 20)) {
-          setCurrentGuess(currentGuess + " ");
-        }
-      } else if (event.key.length === 1 && /[a-zA-Z]/.test(event.key)) {
-        if (currentGuess.length < (currentPersona?.name.length || 20)) {
-          setCurrentGuess(currentGuess + event.key);
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentGuess, gameStatus, currentPersona]);
-
-  const handleGuess = () => {
+  const handleGuess = useCallback(() => {
     if (currentGuess.length === 0 || gameStatus !== "playing") return;
-
     if (currentGuess.length !== currentPersona?.name.length) return;
-
-    const newUsedLetters = new Set(usedLetters);
-    currentGuess
-      .toLowerCase()
-      .split("")
-      .forEach((letter) => {
-        if (letter !== " ") {
-          newUsedLetters.add(letter);
-        }
-      });
-    setUsedLetters(newUsedLetters);
+    setUsedLetters((prev) => {
+      const next = new Set(prev);
+      currentGuess
+        .toLowerCase()
+        .split("")
+        .forEach((letter) => {
+          if (letter !== " ") next.add(letter);
+        });
+      return next;
+    });
 
     if (currentPersona) {
-      const newHint = generateProgressiveHint(currentPersona, attempts + 1);
-      setProgressiveHint(newHint);
+      updateProgressiveHint(currentPersona, attempts + 1);
     }
 
-    const newGuesses = [...guesses, currentGuess];
-    setGuesses(newGuesses);
-    setAttempts(attempts + 1);
+    setGuesses((prev) => [...prev, currentGuess]);
+    setAttempts((prev) => prev + 1);
 
     if (currentGuess.toLowerCase() === currentPersona?.name.toLowerCase()) {
       setGameStatus("won");
@@ -166,7 +128,45 @@ function App() {
     }
 
     setCurrentGuess("");
-  };
+  }, [currentGuess, gameStatus, currentPersona, attempts]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleGuess();
+        return;
+      }
+      if (event.key === "Backspace") {
+        setCurrentGuess((prev) => prev.slice(0, -1));
+        return;
+      }
+      const isChar = event.key.length === 1 && /[a-zA-Z]/.test(event.key);
+      const isSpace = event.key === " ";
+      if (!isChar && !isSpace) return;
+      setCurrentGuess((prev) => {
+        const max = currentPersona?.name.length ?? 20;
+        if (prev.length >= max) return prev;
+        return prev + (isSpace ? " " : event.key);
+      });
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleGuess, currentPersona?.name]);
+
+  useEffect(() => {
+    if (!currentPersona) return;
+    const nameLength = currentPersona.name.length;
+    if (hintPositions.length === 0) {
+      setProgressiveHint("");
+      return;
+    }
+    let hint = "";
+    for (let i = 0; i < nameLength; i++) {
+      hint += hintPositions.includes(i) ? currentPersona.name[i] : "_";
+    }
+    setProgressiveHint(hint);
+  }, [hintPositions, currentPersona]);
 
   const resetGame = () => {
     if (personas.length > 0) {
@@ -325,7 +325,11 @@ function App() {
           </div>
 
           {gameStatus === "playing" && (
-            <div className="flex justify-center items-center space-x-2 sm:space-x-4 mb-4">
+            <div
+              className="flex justify-center items-center space-x-2 sm:space-x-4 mb-4"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               <span className="text-sm sm:text-lg font-semibold text-black">
                 Attempts:
               </span>
@@ -348,7 +352,11 @@ function App() {
           )}
 
           {usedLetters.size > 0 && gameStatus === "playing" && (
-            <div className="mb-4 flex justify-center">
+            <div
+              className="mb-4 flex justify-center"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               <div
                 className="backdrop-blur-sm border-4 sm:border-6 rounded-lg sm:rounded-xl p-3 sm:p-4 w-11/12 sm:w-4/5 max-w-2xl"
                 style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
