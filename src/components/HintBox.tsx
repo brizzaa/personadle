@@ -6,7 +6,7 @@ interface HintBoxProps {
   gameStatus: "playing" | "won" | "lost";
 }
 
-const HintBox = ({ persona, progressiveHint, gameStatus }: HintBoxProps) => {
+const HintBox = ({ progressiveHint, gameStatus }: HintBoxProps) => {
   if (!progressiveHint || gameStatus !== "playing") return null;
 
   const hintLetters = progressiveHint.split("");

@@ -24,7 +24,7 @@ function App() {
   );
   const [attempts, setAttempts] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [usedLetters, setUsedLetters] = useState<Set<string>>(new Set());
+  const [, setUsedLetters] = useState<Set<string>>(new Set());
   const [progressiveHint, setProgressiveHint] = useState("");
   const [hintPositions, setHintPositions] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
