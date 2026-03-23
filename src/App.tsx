@@ -1,12 +1,18 @@
 import "./App.css";
 import { useState, useEffect, useCallback } from "react";
+import { BarChart2, BookOpen, Star, Flame, RefreshCw } from "lucide-react";
 import GameBoard from "./components/GameBoard";
 import PersonaInfo from "./components/PersonaInfo";
 import PersonaModal from "./components/PersonaModal";
+import StatsModal from "./components/StatsModal";
+import CompendiumModal from "./components/CompendiumModal";
 import HintBox from "./components/HintBox";
 import ColorStripes from "./components/ColorStripes";
+import Confetti from "./components/Confetti";
+import ScrambleText from "./components/ScrambleText";
 import type { Persona } from "./types/Persona";
 import { getPersonaType } from "./utils/personaTypes";
+import { useGameStats } from "./hooks/useGameStats";
 
 function App() {
   const [personas, setPersonas] = useState<Persona[]>([]);
@@ -22,6 +28,14 @@ function App() {
   const [progressiveHint, setProgressiveHint] = useState("");
   const [hintPositions, setHintPositions] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [showCompendium, setShowCompendium] = useState(false);
+  const [newGuessIndex, setNewGuessIndex] = useState<number | undefined>(undefined);
+  const [shake, setShake] = useState(false);
+  const [bounceRow, setBounceRow] = useState<number | undefined>(undefined);
+  const [confettiActive, setConfettiActive] = useState(false);
+  const [scoreEarned, setScoreEarned] = useState(0);
+  const { stats, recordGame } = useGameStats();
   const maxAttempts = 6;
 
   const updateProgressiveHint = (persona: Persona, nextAttempts: number) => {
@@ -100,7 +114,11 @@ function App() {
 
   const handleGuess = useCallback(() => {
     if (currentGuess.length === 0 || gameStatus !== "playing") return;
-    if (currentGuess.length !== currentPersona?.name.length) return;
+    if (currentGuess.length !== currentPersona?.name.length) {
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      return;
+    }
     setUsedLetters((prev) => {
       const next = new Set(prev);
       currentGuess
@@ -116,14 +134,25 @@ function App() {
       updateProgressiveHint(currentPersona, attempts + 1);
     }
 
+    const nextAttempts = attempts + 1;
+    setNewGuessIndex(attempts);
     setGuesses((prev) => [...prev, currentGuess]);
-    setAttempts((prev) => prev + 1);
+    setAttempts(nextAttempts);
 
     if (currentGuess.toLowerCase() === currentPersona?.name.toLowerCase()) {
       setGameStatus("won");
-      setTimeout(() => setShowModal(true), 1000);
-    } else if (attempts + 1 >= maxAttempts) {
+      const earned = recordGame(true, nextAttempts, currentPersona.id);
+      setScoreEarned(earned);
+      const flipDuration = (currentPersona.name.length - 1) * 100 + 600;
+      setTimeout(() => {
+        setConfettiActive(true);
+        setBounceRow(attempts);
+        setTimeout(() => setConfettiActive(false), 3500);
+      }, flipDuration);
+      setTimeout(() => setShowModal(true), flipDuration + 400);
+    } else if (nextAttempts >= maxAttempts) {
       setGameStatus("lost");
+      recordGame(false, nextAttempts, currentPersona?.id ?? 0);
       setTimeout(() => setShowModal(true), 1000);
     }
 
@@ -157,21 +186,37 @@ function App() {
   useEffect(() => {
     if (!currentPersona) return;
     const nameLength = currentPersona.name.length;
-    if (hintPositions.length === 0) {
+    const targetLower = currentPersona.name.toLowerCase();
+
+    // Mostra la struttura solo dopo il primo tentativo
+    if (guesses.length === 0 && hintPositions.length === 0) {
       setProgressiveHint("");
       return;
     }
+
+    // Unione: posizioni rivelate casualmente + posizioni già indovinate correttamente
+    const revealed = new Set<number>(hintPositions);
+    guesses.forEach((guess) => {
+      guess.toLowerCase().split("").forEach((char, i) => {
+        if (i < nameLength && char === targetLower[i]) {
+          revealed.add(i);
+        }
+      });
+    });
+
     let hint = "";
     for (let i = 0; i < nameLength; i++) {
-      hint += hintPositions.includes(i) ? currentPersona.name[i] : "_";
+      hint += revealed.has(i) ? currentPersona.name[i] : "_";
     }
     setProgressiveHint(hint);
-  }, [hintPositions, currentPersona]);
+  }, [hintPositions, currentPersona, guesses]);
 
   const resetGame = () => {
     if (personas.length > 0) {
-      const randomIndex = Math.floor(Math.random() * personas.length);
-      setCurrentPersona(personas[randomIndex]);
+      const available = personas.filter((p) => p.id !== currentPersona?.id);
+      const pool = available.length > 0 ? available : personas;
+      const randomIndex = Math.floor(Math.random() * pool.length);
+      setCurrentPersona(pool[randomIndex]);
     }
     setGuesses([]);
     setCurrentGuess("");
@@ -181,6 +226,11 @@ function App() {
     setProgressiveHint("");
     setHintPositions([]);
     setShowModal(false);
+    setNewGuessIndex(undefined);
+    setShake(false);
+    setBounceRow(undefined);
+    setConfettiActive(false);
+    setScoreEarned(0);
   };
 
   return (
@@ -301,10 +351,10 @@ function App() {
         <div className="text-center pt-4 sm:pt-8 pb-4 sm:pb-6 px-4">
           <div className="relative inline-block">
             <h1
-              className="sm:text-4xl md:text-2xl lg:text-[6rem] font-bold  transform transition-transform "
+              className="sm:text-4xl md:text-2xl lg:text-[6rem] font-bold transform transition-transform neon-text"
               style={{ color: "#202020" }}
             >
-              PERSONADLE
+              <ScrambleText text="PERSONADLE" duration={1400} />
             </h1>
           </div>
           <p
@@ -314,14 +364,41 @@ function App() {
             Guess the Persona!
           </p>
 
-          <div className="mb-4 sm:mb-6 flex justify-center space-x-4">
+          <div className="mb-4 sm:mb-6 flex justify-center items-center gap-2 flex-wrap">
             <button
               onClick={resetGame}
-              className="text-[#FFF424] font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-50 border-4 sm:border-6 transform hover:scale-105 text-sm sm:text-base"
-              style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
+              className="flex items-center gap-2 header-btn font-barlow font-black py-2 px-4 rounded-lg border-2 border-[#FFF424] text-[#FFF424] text-sm tracking-widest"
             >
-              New Game
+              <RefreshCw size={14} /> NEW GAME
             </button>
+            <button
+              onClick={() => setShowStats(true)}
+              className="flex items-center gap-2 header-btn font-barlow font-black py-2 px-4 rounded-lg border-2 border-[#FFF424] text-[#FFF424] text-sm tracking-widest"
+            >
+              <BarChart2 size={14} /> STATS
+            </button>
+            <button
+              onClick={() => setShowCompendium(true)}
+              className="flex items-center gap-2 header-btn font-barlow font-black py-2 px-4 rounded-lg border-2 border-[#FFF424] text-[#FFF424] text-sm tracking-widest"
+            >
+              <BookOpen size={14} /> COMPENDIUM
+            </button>
+            {stats.currentStreak > 0 && (
+              <div
+                className="flex items-center gap-1.5 font-barlow font-black py-2 px-4 rounded-full text-white text-sm tracking-widest border-2"
+                style={{ backgroundColor: "#DC2626", borderColor: "#ff6b6b" }}
+              >
+                <Flame size={14} /> {stats.currentStreak}
+              </div>
+            )}
+            {stats.totalScore > 0 && (
+              <div
+                className="flex items-center gap-1.5 font-barlow font-black py-2 px-3 rounded-lg text-white text-sm tracking-widest border-2"
+                style={{ backgroundColor: "#DC2626", borderColor: "#DC2626" }}
+              >
+                <Star size={13} /> {stats.totalScore.toLocaleString()}
+              </div>
+            )}
           </div>
 
           {gameStatus === "playing" && (
@@ -351,32 +428,6 @@ function App() {
             </div>
           )}
 
-          {usedLetters.size > 0 && gameStatus === "playing" && (
-            <div
-              className="mb-4 flex justify-center"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              <div
-                className="backdrop-blur-sm border-4 sm:border-6 rounded-lg sm:rounded-xl p-3 sm:p-4 w-11/12 sm:w-4/5 max-w-2xl"
-                style={{ borderColor: "#FFF424", backgroundColor: "#202020" }}
-              >
-                <div className="text-xs sm:text-sm font-bold text-white mb-2 text-center">
-                  Used letters:
-                </div>
-                <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
-                  {Array.from(usedLetters).map((letter) => (
-                    <span
-                      key={letter}
-                      className="bg-[#FFF424] text-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-xs sm:text-sm font-bold"
-                    >
-                      {letter.toUpperCase()}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
@@ -438,50 +489,12 @@ function App() {
                     currentGuess={currentGuess}
                     maxAttempts={maxAttempts}
                     currentPersona={currentPersona}
+                    newGuessIndex={newGuessIndex}
+                    shake={shake}
+                    bounceRow={bounceRow}
                   />
 
-                  <div className="mb-4 sm:hidden flex justify-center">
-                    <div
-                      className="backdrop-blur-sm border-2 border-[#FFF424] rounded p-2 mt-3"
-                      style={{ backgroundColor: "#202020", maxWidth: "200px" }}
-                    >
-                      <div className="flex gap-1 justify-center">
-                        <input
-                          type="text"
-                          value={currentGuess}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (
-                              value.length <=
-                                (currentPersona?.name.length || 20) &&
-                              /^[a-zA-Z\s]*$/.test(value)
-                            ) {
-                              setCurrentGuess(value);
-                            }
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              handleGuess();
-                            }
-                          }}
-                          placeholder={`${currentPersona?.name.length || 0}`}
-                          className="w-20 px-1.5 bg-gray-800 text-white border border-[#FFF424] rounded focus:outline-none text-center font-bold mobile-input text-xs"
-                          style={{ fontSize: "14px" }}
-                          maxLength={currentPersona?.name.length || 20}
-                        />
-                        <button
-                          onClick={handleGuess}
-                          disabled={
-                            currentGuess.length === 0 ||
-                            gameStatus !== "playing"
-                          }
-                          className="px-1.5 bg-[#FFF424] text-black font-bold rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-300 transition-colors text-xs"
-                        >
-                          Guess!
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -568,14 +581,36 @@ function App() {
         </div>
       </div>
 
+      <Confetti active={confettiActive} />
+
       {currentPersona && (gameStatus === "won" || gameStatus === "lost") && (
         <PersonaModal
           persona={currentPersona}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
+          onNewGame={resetGame}
           gameStatus={gameStatus}
+          attempts={attempts}
+          maxAttempts={maxAttempts}
+          guesses={guesses}
+          scoreEarned={scoreEarned}
+          totalScore={stats.totalScore}
+          streak={stats.currentStreak}
         />
       )}
+
+      <StatsModal
+        stats={stats}
+        isOpen={showStats}
+        onClose={() => setShowStats(false)}
+      />
+
+      <CompendiumModal
+        personas={personas}
+        unlockedIds={stats.unlockedPersonaIds}
+        isOpen={showCompendium}
+        onClose={() => setShowCompendium(false)}
+      />
     </div>
   );
 }

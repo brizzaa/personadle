@@ -9,9 +9,7 @@ interface HintBoxProps {
 const HintBox = ({ persona, progressiveHint, gameStatus }: HintBoxProps) => {
   if (!progressiveHint || gameStatus !== "playing") return null;
 
-  const targetLength = persona.name.length;
   const hintLetters = progressiveHint.split("");
-  const remainingLength = targetLength - progressiveHint.length;
 
   return (
     <div className="mb-4 sm:mb-6">
@@ -23,22 +21,23 @@ const HintBox = ({ persona, progressiveHint, gameStatus }: HintBoxProps) => {
           💡
         </h3>
         <div className="flex gap-1 sm:gap-2 justify-center flex-wrap">
-          {hintLetters.map((letter, index) => (
-            <div
-              key={`hint-${index}`}
-              className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-black font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-[#FFF424] bg-[#FFF424] transition-all duration-200 transform hover:scale-105 flex-shrink-0"
-            >
-              {letter}
-            </div>
-          ))}
-          {Array.from({ length: remainingLength }, (_, index) => (
-            <div
-              key={`hint-empty-${index}`}
-              className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-white font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-[#FFF424] bg-gray-300 transition-all duration-500 flex-shrink-0"
-            >
-              _
-            </div>
-          ))}
+          {hintLetters.map((letter, index) =>
+            letter !== "_" ? (
+              <div
+                key={`hint-${index}`}
+                className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-black font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-[#FFF424] bg-[#FFF424] transition-all duration-200 transform hover:scale-105 flex-shrink-0"
+              >
+                {letter}
+              </div>
+            ) : (
+              <div
+                key={`hint-${index}`}
+                className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-gray-500 bg-gray-700 flex-shrink-0"
+              >
+                _
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

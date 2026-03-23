@@ -1,3 +1,24 @@
+/* Cinzel + Barlow Condensed via Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cinzel+Decorative:wght@900&family=Barlow+Condensed:wght@600;700;900&display=swap');
+
+.font-cinzel { font-family: 'Cinzel', serif; }
+.font-barlow { font-family: 'Barlow Condensed', sans-serif; }
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+.confetti-fall {
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes bounce-win {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40%       { transform: translateY(-14px) scale(1.08); }
+  60%       { transform: translateY(-7px) scale(1.04); }
+}
+.bounce-win { animation: bounce-win 0.7s ease-in-out both; }
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
@@ -58,6 +79,33 @@ body {
 
 .flip-animation {
   animation: flip 0.6s ease-in-out;
+}
+
+@keyframes flip-reveal {
+  0% {
+    transform: perspective(250px) rotateX(0deg);
+    background-color: #374151;
+    color: transparent;
+  }
+  45% {
+    transform: perspective(250px) rotateX(-90deg);
+    background-color: #374151;
+    color: transparent;
+  }
+  55% {
+    transform: perspective(250px) rotateX(-90deg);
+    background-color: var(--tile-color);
+    color: white;
+  }
+  100% {
+    transform: perspective(250px) rotateX(0deg);
+    background-color: var(--tile-color);
+    color: white;
+  }
+}
+
+.flip-reveal-animation {
+  animation: flip-reveal 0.5s ease-in-out both;
 }
 
 @keyframes shake {
@@ -249,6 +297,70 @@ body {
 .neon-text {
   text-shadow: 0 0 5px rgba(255, 244, 36, 0.8), 0 0 10px rgba(255, 244, 36, 0.6),
     0 0 15px rgba(255, 244, 36, 0.4);
+}
+
+/* ---- AWWWARDS ANIMATIONS ---- */
+
+/* Glitch effect */
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 95% 0); transform: translateX(0); }
+  20%       { clip-path: inset(8% 0 82% 0); transform: translateX(-4px); }
+  40%       { clip-path: inset(43% 0 48% 0); transform: translateX(4px); }
+  60%       { clip-path: inset(68% 0 22% 0); transform: translateX(-4px); }
+  80%       { clip-path: inset(92% 0 3% 0); transform: translateX(4px); }
+}
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(0 0 95% 0); transform: translateX(0); }
+  20%       { clip-path: inset(52% 0 30% 0); transform: translateX(4px); }
+  40%       { clip-path: inset(18% 0 60% 0); transform: translateX(-4px); }
+  60%       { clip-path: inset(75% 0 12% 0); transform: translateX(4px); }
+  80%       { clip-path: inset(35% 0 55% 0); transform: translateX(-4px); }
+}
+.glitch {
+  position: relative;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  animation-duration: 0.45s;
+  animation-timing-function: steps(1);
+  animation-iteration-count: infinite;
+}
+.glitch::before {
+  color: #DC2626;
+  animation-name: glitch-1;
+}
+.glitch::after {
+  color: #FFF424;
+  animation-name: glitch-2;
+  animation-delay: 0.1s;
+}
+
+/* Character stagger pop */
+@keyframes char-pop {
+  0%   { transform: scale(0) translateY(16px) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(1.25) translateY(-4px) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) translateY(0) rotate(0); opacity: 1; }
+}
+.char-stagger span {
+  display: inline-block;
+  animation: char-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Header button wipe-fill hover (bottom → top) */
+.header-btn {
+  background-color: #202020;
+  background-image: linear-gradient(to top, #FFF424, #FFF424);
+  background-size: 100% 0%;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  transition: background-size 0.4s cubic-bezier(0.19, 1, 0.22, 1), color 0.25s;
+}
+.header-btn:hover {
+  background-size: 100% 100%;
+  color: #000000;
 }
 
 .glass-effect {
