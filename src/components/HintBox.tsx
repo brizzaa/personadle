@@ -1,4 +1,6 @@
+import { Lightbulb } from "lucide-react";
 import type { Persona } from "../types/Persona";
+import { getTileSizeClass, getTileGapClass } from "./GameBoard";
 
 interface HintBoxProps {
   persona: Persona;
@@ -10,34 +12,39 @@ const HintBox = ({ progressiveHint, gameStatus }: HintBoxProps) => {
   if (!progressiveHint || gameStatus !== "playing") return null;
 
   const hintLetters = progressiveHint.split("");
+  const sizeClass = getTileSizeClass(progressiveHint.length);
+  const gapClass = getTileGapClass(progressiveHint.length);
 
   return (
     <div className="mb-4 sm:mb-6">
       <div
-        className="backdrop-blur-sm border-4 border-[#FFF424] rounded-lg sm:rounded-xl p-3 sm:p-4"
+        className="backdrop-blur-sm border-4 border-brand rounded-lg sm:rounded-xl p-3 sm:p-4"
         style={{ backgroundColor: "#202020" }}
       >
-        <h3 className="text-sm sm:text-lg font-bold text-[#FFF424] mb-2 sm:mb-3 text-center">
-          💡
+        <h3 className="flex justify-center mb-2 sm:mb-3 text-brand" aria-label="Revealed letters">
+          <Lightbulb size={18} aria-hidden />
         </h3>
-        <div className="flex gap-1 sm:gap-2 justify-center flex-wrap">
-          {hintLetters.map((letter, index) =>
-            letter !== "_" ? (
+        <div className={`flex ${gapClass} justify-center`}>
+          {hintLetters.map((letter, index) => {
+            if (letter === " ") {
+              return <div key={`hint-${index}`} aria-hidden className="w-2 sm:w-3 flex-shrink-0" />;
+            }
+            return letter !== "_" ? (
               <div
                 key={`hint-${index}`}
-                className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-black font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-[#FFF424] bg-[#FFF424] transition-all duration-200 transform hover:scale-105 flex-shrink-0"
+                className={`${sizeClass} flex items-center justify-center text-black font-bold rounded-md sm:rounded-lg border-brand bg-brand flex-shrink-0`}
               >
                 {letter}
               </div>
             ) : (
               <div
                 key={`hint-${index}`}
-                className="min-w-8 w-8 h-8 sm:min-w-10 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-gray-500 bg-gray-700 flex-shrink-0"
+                className={`${sizeClass} flex items-center justify-center text-gray-400 font-bold rounded-md sm:rounded-lg border-gray-500 bg-gray-700 flex-shrink-0`}
               >
                 _
               </div>
-            )
-          )}
+            );
+          })}
         </div>
       </div>
     </div>

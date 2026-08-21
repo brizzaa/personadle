@@ -17,6 +17,7 @@ import type { GameStats } from "../types/GameStats";
 import { achievements } from "../data/achievements";
 import type { LucideIcon } from "lucide-react";
 import useCountUp from "../hooks/useCountUp";
+import { useModal } from "../hooks/useModal";
 
 interface StatsModalProps {
   stats: GameStats;
@@ -49,16 +50,22 @@ const CountUpNumber = ({ value, isOpen, suffix = "" }: { value: number; isOpen: 
 };
 
 const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
+  useModal(isOpen, onClose);
   if (!isOpen) return null;
 
   const maxDist = Math.max(...stats.guessDistribution, 1);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Statistics"
+    >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       <div
-        className="relative border-4 border-[#FFF424] rounded-xl w-full max-w-lg mx-3 max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp"
+        className="relative border-4 border-brand rounded-xl w-full max-w-lg mx-3 max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp"
         style={{ backgroundColor: "#202020" }}
       >
         {/* stripe top */}
@@ -73,12 +80,16 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
         {/* header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-3">
           <div className="flex items-center gap-3">
-            <BarChart2 className="text-[#FFF424]" size={22} />
-            <span className="font-cinzel text-[#FFF424] text-xl font-bold tracking-widest">
-              STATISTICHE
+            <BarChart2 className="text-brand" size={22} />
+            <span className="font-cinzel text-brand text-xl font-bold tracking-widest">
+              STATISTICS
             </span>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
             <X size={24} />
           </button>
         </div>
@@ -87,17 +98,17 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
           {/* stat boxes */}
           <div className="grid grid-cols-4 gap-2">
             {[
-              { node: <CountUpNumber value={stats.gamesPlayed} isOpen={isOpen} />, label: "PARTITE" },
+              { node: <CountUpNumber value={stats.gamesPlayed} isOpen={isOpen} />, label: "PLAYED" },
               { node: <CountUpNumber value={winRate(stats)} isOpen={isOpen} suffix="%" />, label: "WIN RATE" },
-              { node: <span>{avgAttempts(stats)}</span>, label: "MEDIA" },
+              { node: <span>{avgAttempts(stats)}</span>, label: "AVG" },
               { node: <CountUpNumber value={stats.totalScore} isOpen={isOpen} />, label: "SCORE" },
             ].map(({ node, label }) => (
               <div
                 key={label}
-                className="text-center border-2 border-[#FFF424] rounded-lg py-4 px-2"
+                className="text-center border-2 border-brand rounded-lg py-4 px-2"
                 style={{ backgroundColor: "#111" }}
               >
-                <div className="font-cinzel text-[#FFF424] text-2xl font-black leading-none">
+                <div className="font-cinzel text-brand text-2xl font-black leading-none">
                   {node}
                 </div>
                 <div className="text-gray-400 text-xs tracking-widest mt-2 font-barlow font-bold">
@@ -110,8 +121,8 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
           {/* streak */}
           <div className="grid grid-cols-2 gap-3">
             {[
-              { Icon: Flame, value: stats.currentStreak, label: "STREAK ATTUALE", color: "#DC2626" },
-              { Icon: Medal, value: stats.maxStreak, label: "RECORD", color: "#DC2626" },
+              { Icon: Flame, value: stats.currentStreak, label: "CURRENT STREAK", color: "#DC2626" },
+              { Icon: Medal, value: stats.maxStreak, label: "BEST", color: "#DC2626" },
             ].map(({ Icon, value, label, color }) => (
               <div
                 key={label}
@@ -133,13 +144,13 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
 
           {/* guess distribution */}
           <div>
-            <div className="text-[#FFF424] text-sm tracking-widest font-barlow font-bold mb-3">
-              DISTRIBUZIONE TENTATIVI
+            <div className="text-brand text-sm tracking-widest font-barlow font-bold mb-3">
+              GUESS DISTRIBUTION
             </div>
             <div className="space-y-2">
               {stats.guessDistribution.map((count, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <span className="font-cinzel text-[#FFF424] text-base font-bold w-4 text-center">
+                  <span className="font-cinzel text-brand text-base font-bold w-4 text-center">
                     {i + 1}
                   </span>
                   <div className="flex-1 rounded overflow-hidden" style={{ background: "#1a1a1a" }}>
@@ -164,10 +175,10 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
           {/* achievements */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[#FFF424] text-sm tracking-widest font-barlow font-bold">
+              <span className="text-brand text-sm tracking-widest font-barlow font-bold">
                 ACHIEVEMENT
               </span>
-              <span className="text-gray-500 text-sm font-barlow font-bold">
+              <span className="text-gray-400 text-sm font-barlow font-bold">
                 {stats.unlockedAchievements.length}/{achievements.length}
               </span>
             </div>
@@ -178,8 +189,8 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
                 return (
                   <div
                     key={ach.id}
-                    title={`${ach.name}: ${ach.description}`}
-                    className="relative flex flex-col items-center text-center rounded-lg py-3 px-2 border-2 transition-opacity"
+                    tabIndex={0}
+                    className="group relative flex flex-col items-center text-center rounded-lg py-3 px-2 border-2 transition-opacity focus:outline-none focus:ring-2 focus:ring-brand"
                     style={{
                       backgroundColor: "#111",
                       borderColor: unlocked ? "#FFF424" : "#2a2a2a",
@@ -213,6 +224,17 @@ const StatsModal = ({ stats, isOpen, onClose }: StatsModalProps) => {
                     >
                       {ach.name.toUpperCase()}
                     </span>
+                    {/* popover al posto del title nativo (funziona anche su touch/focus) */}
+                    <div
+                      className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-40 rounded-lg border-2 border-brand px-3 py-2 text-xs font-barlow text-gray-200 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity z-10"
+                      style={{ backgroundColor: "#111" }}
+                      role="tooltip"
+                    >
+                      <span className="block font-black text-brand mb-0.5">
+                        {ach.name}
+                      </span>
+                      {ach.description}
+                    </div>
                   </div>
                 );
               })}

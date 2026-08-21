@@ -48,42 +48,36 @@ const PersonaImage: React.FC<PersonaImageProps> = ({
       setHasError(false);
 
       const urls = getProxyUrls(src);
-      let resolved = false;
 
-      const promises = urls.map(
-        (url) =>
-          new Promise<boolean>((resolve) => {
-            const img = new Image();
+      // Fallback sequenziale: il primo proxy che risponde vince,
+      // gli altri non partono nemmeno (prima erano 6 richieste in parallelo)
+      const tryLoad = (url: string) =>
+        new Promise<boolean>((resolve) => {
+          const img = new Image();
+          const timeout = setTimeout(() => resolve(false), 5000);
+          img.onload = () => {
+            clearTimeout(timeout);
+            resolve(true);
+          };
+          img.onerror = () => {
+            clearTimeout(timeout);
+            resolve(false);
+          };
+          img.src = url;
+        });
 
-            const timeout = setTimeout(() => {
-              resolve(false);
-            }, 5000);
-
-            img.onload = () => {
-              clearTimeout(timeout);
-              if (!resolved) {
-                resolved = true;
-                setCurrentSrc(url);
-                setIsLoading(false);
-                onLoad?.();
-              }
-              resolve(true);
-            };
-            img.onerror = () => {
-              clearTimeout(timeout);
-              resolve(false);
-            };
-            img.src = url;
-          })
-      );
-
-      await Promise.allSettled(promises);
-
-      if (!resolved) {
-        setHasError(true);
-        setIsLoading(false);
-        onError?.();
+      for (const url of urls) {
+        if (await tryLoad(url)) {
+          setCurrentSrc(url);
+          setIsLoading(false);
+          onLoad?.();
+          return;
+        }
       }
+
+      setHasError(true);
+      setIsLoading(false);
+      onError?.();
     };
 
     loadImage();

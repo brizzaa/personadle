@@ -1,4 +1,6 @@
+import { Delete, CornerDownLeft } from "lucide-react";
 import type { Persona } from "../types/Persona";
+import { normalizeName, getRowStatuses } from "../utils/feedback";
 
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
@@ -6,75 +8,58 @@ interface KeyboardProps {
   currentPersona: Persona;
 }
 
+type KeyStatus = "correct" | "present" | "absent" | "unused";
+
 interface KeyProps {
-  letter: string;
-  status: "correct" | "present" | "absent" | "unused";
+  label: React.ReactNode;
+  ariaLabel: string;
+  status: KeyStatus;
+  wide?: boolean;
   onClick: () => void;
 }
 
-const Key = ({ letter, status, onClick }: KeyProps) => {
+const Key = ({ label, ariaLabel, status, wide, onClick }: KeyProps) => {
   const getStatusColor = () => {
     switch (status) {
       case "correct":
-        return "bg-green-600 hover:bg-green-700 border-2 border-yellow-400";
+        return "bg-green-600 text-white";
       case "present":
-        return "bg-yellow-500 hover:bg-yellow-600 border-2 border-yellow-400";
+        return "bg-yellow-500 text-white";
       case "absent":
-        return "bg-gray-600 hover:bg-gray-700 border-2 border-yellow-400";
+        return "bg-gray-600 text-white";
       default:
-        return "bg-gray-300 hover:bg-gray-400 border-2 border-yellow-400";
+        return "bg-gray-300 text-black";
     }
   };
 
   return (
     <button
       onClick={onClick}
-      className={`px-2 py-1.5 sm:px-3 sm:py-2 m-0.5 sm:m-1 text-black font-bold text-xs sm:text-sm rounded-md sm:rounded-lg transition-colors ${getStatusColor()}`}
+      aria-label={ariaLabel}
+      className={`${
+        wide ? "flex-[1.5] max-w-14" : "flex-1 max-w-10"
+      } min-w-0 flex items-center justify-center py-2 sm:py-2.5 font-bold text-xs sm:text-sm rounded-md sm:rounded-lg border-2 border-brand transition-colors active:scale-95 ${getStatusColor()}`}
     >
-      {letter}
+      {label}
     </button>
   );
 };
 
 const Keyboard = ({ onKeyPress, guesses, currentPersona }: KeyboardProps) => {
-  const getKeyStatus = (
-    letter: string
-  ): "correct" | "present" | "absent" | "unused" => {
-    const targetName = currentPersona.name.toLowerCase();
-    let hasCorrect = false;
-    let hasPresent = false;
-    let hasAbsent = false;
-
-    guesses.forEach((guess) => {
-      const guessLower = guess.toLowerCase();
-      const letterLower = letter.toLowerCase();
-
-      if (guessLower.includes(letterLower)) {
-        for (
-          let i = 0;
-          i < Math.min(guessLower.length, targetName.length);
-          i++
-        ) {
-          if (guessLower[i] === letterLower && targetName[i] === letterLower) {
-            hasCorrect = true;
-          }
-        }
-
-        if (!hasCorrect && targetName.includes(letterLower)) {
-          hasPresent = true;
-        }
-
-        if (!targetName.includes(letterLower)) {
-          hasAbsent = true;
-        }
+  // Stato per tasto derivato dalla stessa logica di feedback della griglia;
+  // priorità: correct > present > absent
+  const rank = { absent: 0, present: 1, correct: 2 } as const;
+  const keyStatuses = new Map<string, "correct" | "present" | "absent">();
+  guesses.forEach((guess) => {
+    const statuses = getRowStatuses(guess, currentPersona.name);
+    normalizeName(guess).split("").forEach((char, i) => {
+      if (char === " ") return;
+      const prev = keyStatuses.get(char);
+      if (!prev || rank[statuses[i]] > rank[prev]) {
+        keyStatuses.set(char, statuses[i]);
       }
     });
-
-    if (hasCorrect) return "correct";
-    if (hasPresent) return "present";
-    if (hasAbsent) return "absent";
-    return "unused";
-  };
+  });
 
   const keyboardRows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -83,45 +68,39 @@ const Keyboard = ({ onKeyPress, guesses, currentPersona }: KeyboardProps) => {
   ];
 
   return (
-    <div className="mb-6 sm:mb-8">
-      <div
-        className="border-2 border-yellow-400 rounded-lg p-3 sm:p-6"
-        style={{ backgroundColor: "#202020" }}
-      >
-        <h2 className="text-sm sm:text-xl font-bold mb-3 sm:mb-4 text-center text-white">
-          Tastiera
-        </h2>
-        <div className="space-y-1 sm:space-y-2">
-          {keyboardRows.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex justify-center">
-              {row.map((letter) => (
-                <Key
-                  key={letter}
-                  letter={letter}
-                  status={getKeyStatus(letter)}
-                  onClick={() => onKeyPress(letter)}
-                />
-              ))}
-            </div>
-          ))}
-          <div className="flex justify-center mt-2 sm:mt-4">
-            <Key
-              letter="SPACE"
-              status="unused"
-              onClick={() => onKeyPress(" ")}
-            />
-            <Key
-              letter="ENTER"
-              status="unused"
-              onClick={() => onKeyPress("ENTER")}
-            />
-            <Key
-              letter="⌫"
-              status="unused"
-              onClick={() => onKeyPress("BACKSPACE")}
-            />
+    <div className="mt-4">
+      <div className="space-y-1">
+        {keyboardRows.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-center gap-1 w-full">
+            {rowIndex === 2 && (
+              <Key
+                label={<CornerDownLeft size={16} />}
+                ariaLabel="Submit guess"
+                status="unused"
+                wide
+                onClick={() => onKeyPress("ENTER")}
+              />
+            )}
+            {row.map((letter) => (
+              <Key
+                key={letter}
+                label={letter}
+                ariaLabel={letter}
+                status={keyStatuses.get(letter.toLowerCase()) ?? "unused"}
+                onClick={() => onKeyPress(letter)}
+              />
+            ))}
+            {rowIndex === 2 && (
+              <Key
+                label={<Delete size={16} />}
+                ariaLabel="Delete letter"
+                status="unused"
+                wide
+                onClick={() => onKeyPress("BACKSPACE")}
+              />
+            )}
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );

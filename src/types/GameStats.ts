@@ -7,4 +7,5 @@ export interface GameStats {
   totalScore: number;
   unlockedPersonaIds: number[];
   unlockedAchievements: string[];
+  lastPlayedDay: number | null; // giorno UTC dell'ultimo daily giocato (per la streak)
 }

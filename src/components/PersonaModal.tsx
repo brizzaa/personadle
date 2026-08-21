@@ -1,6 +1,27 @@
-import { Star, Share2, X, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Star,
+  Share2,
+  X,
+  RefreshCw,
+  BookOpen,
+  Award,
+  Zap,
+  Flame,
+  Search,
+  Skull,
+  Tv2,
+  CloudRain,
+  Gem,
+  Eye,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Persona } from "../types/Persona";
+import type { GameRecordResult } from "../hooks/useGameStats";
 import PersonaImage from "./PersonaImage";
+import { getShareEmoji } from "../utils/feedback";
+import { msUntilNextDay } from "../utils/daily";
+import { useModal } from "../hooks/useModal";
 
 interface PersonaModalProps {
   persona: Persona;
@@ -11,34 +32,51 @@ interface PersonaModalProps {
   attempts: number;
   maxAttempts: number;
   guesses: string[];
-  scoreEarned: number;
+  gameResult: GameRecordResult | null;
   totalScore: number;
   streak: number;
+  mode: "daily" | "practice";
+  day: number;
+  compendiumCount: number;
+  compendiumTotal: number;
+  onOpenCompendium: () => void;
 }
 
-const getShareEmoji = (guess: string, target: string): string => {
-  const guessChars = guess.toLowerCase().split("");
-  const targetChars = target.toLowerCase().split("");
-  const result: string[] = Array(guessChars.length).fill("⬜");
-  const targetUsed = Array(targetChars.length).fill(false);
+const achievementIcons: Record<string, LucideIcon> = {
+  zap: Zap,
+  flame: Flame,
+  search: Search,
+  skull: Skull,
+  "tv-2": Tv2,
+  "cloud-rain": CloudRain,
+  gem: Gem,
+  eye: Eye,
+};
 
-  for (let i = 0; i < guessChars.length; i++) {
-    if (guessChars[i] === targetChars[i]) {
-      result[i] = "🟩";
-      targetUsed[i] = true;
-    }
-  }
-  for (let i = 0; i < guessChars.length; i++) {
-    if (result[i] === "🟩") continue;
-    for (let j = 0; j < targetChars.length; j++) {
-      if (!targetUsed[j] && guessChars[i] === targetChars[j]) {
-        result[i] = "🟨";
-        targetUsed[j] = true;
-        break;
-      }
-    }
-  }
-  return result.join("");
+const formatCountdown = (ms: number): string => {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
+};
+
+const Countdown = () => {
+  const [remaining, setRemaining] = useState(msUntilNextDay());
+  useEffect(() => {
+    const id = setInterval(() => setRemaining(msUntilNextDay()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="text-center">
+      <div className="font-barlow text-gray-400 text-xs tracking-widest font-bold mb-1">
+        NEXT PERSONA IN
+      </div>
+      <div className="font-cinzel text-brand text-2xl font-black tabular-nums">
+        {formatCountdown(remaining)}
+      </div>
+    </div>
+  );
 };
 
 const PersonaModal = ({
@@ -50,17 +88,43 @@ const PersonaModal = ({
   attempts,
   maxAttempts,
   guesses,
-  scoreEarned,
+  gameResult,
   totalScore,
   streak,
+  mode,
+  day,
+  compendiumCount,
+  compendiumTotal,
+  onOpenCompendium,
 }: PersonaModalProps) => {
+  const [copied, setCopied] = useState(false);
+  useModal(isOpen, onClose);
+
   if (!isOpen) return null;
+
+  const scoreEarned = gameResult?.scoreEarned ?? 0;
+  const newAchievements = gameResult?.newAchievements ?? [];
+  const personaWasNew = gameResult?.personaWasNew ?? false;
 
   const handleShare = () => {
     const grid = guesses.map((g) => getShareEmoji(g, persona.name)).join("\n");
-    const result = gameStatus === "won" ? `${attempts}/${maxAttempts}` : "X/6";
+    const result =
+      gameStatus === "won" ? `${attempts}/${maxAttempts}` : `X/${maxAttempts}`;
+    const title =
+      mode === "daily" ? `Personadle #${day} ${result}` : `Personadle (practice) ${result}`;
+    const streakLine = mode === "daily" && streak > 1 ? ` 🔥${streak}` : "";
+    const text = `${title}${streakLine}\n\n${grid}\npersonadle.vercel.app`;
+
+    if (navigator.share) {
+      navigator.share({ text }).catch(() => {});
+      return;
+    }
     navigator.clipboard
-      .writeText(`Personadle ${result}\n\n${grid}\npersonadle.vercel.app`)
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
       .catch(() => {});
   };
 
@@ -68,11 +132,16 @@ const PersonaModal = ({
   const streakBonus = Math.max(streak - 1, 0) * 30;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="result-title"
+    >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       <div
-        className="relative border-4 border-[#FFF424] rounded-xl w-full max-w-lg mx-3 max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp"
+        className="relative border-4 border-brand rounded-xl w-full max-w-lg mx-3 max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp"
         style={{ backgroundColor: "#202020" }}
       >
         {/* stripe top */}
@@ -86,7 +155,8 @@ const PersonaModal = ({
 
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors"
+          aria-label="Close"
+          className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
         >
           <X size={20} />
         </button>
@@ -94,7 +164,10 @@ const PersonaModal = ({
         {/* title */}
         <div className="text-center pt-5 pb-4 px-6">
           {gameStatus === "won" ? (
-            <h2 className="font-cinzel text-[#FFF424] text-xl font-black tracking-widest mb-1 char-stagger">
+            <h2
+              id="result-title"
+              className="font-cinzel text-brand text-xl font-black tracking-widest mb-1 char-stagger"
+            >
               {"EXCELLENT!".split("").map((char, i) => (
                 <span key={i} style={{ animationDelay: `${i * 55}ms` }}>
                   {char}
@@ -103,7 +176,8 @@ const PersonaModal = ({
             </h2>
           ) : (
             <h2
-              className="font-cinzel text-[#FFF424] text-xl font-black tracking-widest mb-1 glitch"
+              id="result-title"
+              className="font-cinzel text-brand text-xl font-black tracking-widest mb-1 glitch"
               data-text="GAME OVER"
             >
               GAME OVER
@@ -123,7 +197,7 @@ const PersonaModal = ({
               <PersonaImage
                 src={persona.image}
                 alt={persona.name}
-                className="w-28 h-28 rounded-lg border-2 border-[#FFF424] bg-gray-900 object-contain"
+                className="w-28 h-28 rounded-lg border-2 border-brand bg-gray-900 object-contain"
               />
               <div
                 className="px-3 py-1 rounded-full font-barlow font-black text-xs tracking-widest"
@@ -131,7 +205,7 @@ const PersonaModal = ({
               >
                 {persona.arcana.toUpperCase()}
               </div>
-              <span className="font-barlow text-gray-500 text-xs tracking-wide">
+              <span className="font-barlow text-gray-400 text-xs tracking-wide">
                 LEVEL {persona.level}
               </span>
             </div>
@@ -145,10 +219,54 @@ const PersonaModal = ({
             </div>
           </div>
 
-          {/* score — solo se si è vinto */}
+          {/* new persona unlocked */}
+          {personaWasNew && (
+            <button
+              onClick={onOpenCompendium}
+              className="w-full border-2 border-brand rounded-lg p-3 flex items-center justify-between gap-3 hover:bg-brand/10 transition-colors"
+              style={{ backgroundColor: "#111" }}
+            >
+              <div className="flex items-center gap-2">
+                <BookOpen size={16} className="text-brand" />
+                <span className="font-barlow text-brand text-xs tracking-widest font-bold">
+                  NEW PERSONA UNLOCKED
+                </span>
+              </div>
+              <span className="font-cinzel text-brand text-sm font-bold">
+                {compendiumCount}/{compendiumTotal}
+              </span>
+            </button>
+          )}
+
+          {/* new achievements */}
+          {newAchievements.length > 0 && (
+            <div
+              className="border-2 border-brand rounded-lg p-3 space-y-2"
+              style={{ backgroundColor: "#111" }}
+            >
+              {newAchievements.map((ach) => {
+                const Icon = achievementIcons[ach.icon] ?? Award;
+                return (
+                  <div key={ach.id} className="flex items-center gap-3">
+                    <Icon size={20} className="text-brand flex-shrink-0" />
+                    <div className="text-left">
+                      <div className="font-barlow text-brand text-xs tracking-widest font-bold">
+                        ACHIEVEMENT — {ach.name.toUpperCase()}
+                      </div>
+                      <div className="font-barlow text-gray-300 text-xs">
+                        {ach.description}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* score — solo daily vinto */}
           {gameStatus === "won" && scoreEarned > 0 && (
             <div
-              className="border-2 border-[#FFF424] rounded-lg p-4 relative overflow-hidden"
+              className="border-2 border-brand rounded-lg p-4 relative overflow-hidden"
               style={{ backgroundColor: "#111" }}
             >
               {/* diagonal deco */}
@@ -160,23 +278,28 @@ const PersonaModal = ({
                 }}
               />
               <div className="flex items-center gap-2 mb-3">
-                <Star size={16} className="text-[#FFF424]" />
-                <span className="font-barlow text-[#FFF424] text-xs tracking-widest font-bold">
-                  PUNTEGGIO
+                <Star size={16} className="text-brand" />
+                <span className="font-barlow text-brand text-xs tracking-widest font-bold">
+                  SCORE
                 </span>
               </div>
-              <div className="font-cinzel text-[#FFF424] text-4xl font-black text-center mb-3" style={{ textShadow: "2px 2px 0 #000" }}>
+              <div
+                className="font-cinzel text-brand text-4xl font-black text-center mb-3"
+                style={{ textShadow: "2px 2px 0 #000" }}
+              >
                 +{scoreEarned}
               </div>
               <div className="space-y-1 text-xs font-barlow">
-                <div className="flex justify-between text-gray-500 tracking-wide">
-                  <span>Base ({attempts} {attempts === 1 ? "attempt" : "attempts"})</span>
+                <div className="flex justify-between text-gray-400 tracking-wide">
+                  <span>
+                    Base ({attempts} {attempts === 1 ? "attempt" : "attempts"})
+                  </span>
                   <span className="text-gray-300">{baseScore}</span>
                 </div>
                 {streakBonus > 0 && (
-                  <div className="flex justify-between text-gray-500 tracking-wide">
+                  <div className="flex justify-between text-gray-400 tracking-wide">
                     <span>Streak bonus (×{streak})</span>
-                    <span className="text-[#FFF424] font-bold">+{streakBonus}</span>
+                    <span className="text-brand font-bold">+{streakBonus}</span>
                   </div>
                 )}
                 <div
@@ -184,7 +307,7 @@ const PersonaModal = ({
                   style={{ color: "#aaa" }}
                 >
                   <span>Total score</span>
-                  <span className="font-cinzel text-[#FFF424] font-bold">
+                  <span className="font-cinzel text-brand font-bold">
                     {totalScore.toLocaleString()}
                   </span>
                 </div>
@@ -192,15 +315,25 @@ const PersonaModal = ({
             </div>
           )}
 
+          {/* countdown al prossimo daily */}
+          {mode === "daily" && (
+            <div
+              className="border-2 border-brand rounded-lg p-3"
+              style={{ backgroundColor: "#111" }}
+            >
+              <Countdown />
+            </div>
+          )}
+
           {/* buttons */}
           <div className="flex gap-3">
             <button
               onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-[#FFF424] font-barlow font-bold text-[#FFF424] text-sm tracking-widest hover:bg-[#FFF424] hover:text-black transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-brand font-barlow font-bold text-brand text-sm tracking-widest hover:bg-brand hover:text-black transition-colors"
               style={{ backgroundColor: "#111" }}
             >
               <Share2 size={15} />
-              SHARE
+              {copied ? "COPIED!" : "SHARE"}
             </button>
             <button
               onClick={onNewGame}
@@ -208,7 +341,7 @@ const PersonaModal = ({
               style={{ backgroundColor: "#FFF424" }}
             >
               <RefreshCw size={15} />
-              NEW GAME
+              {mode === "daily" ? "PRACTICE" : "NEW GAME"}
             </button>
           </div>
         </div>

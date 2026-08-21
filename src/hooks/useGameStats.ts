@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { GameStats } from "../types/GameStats";
-import { achievements } from "../data/achievements";
+import { achievements, type Achievement } from "../data/achievements";
 import { calculateScore } from "../utils/score";
 
 const STORAGE_KEY = "personadle_stats";
@@ -14,6 +14,7 @@ const defaultStats: GameStats = {
   totalScore: 0,
   unlockedPersonaIds: [],
   unlockedAchievements: [],
+  lastPlayedDay: null,
 };
 
 function loadStats(): GameStats {
@@ -36,6 +37,12 @@ function computeAchievements(stats: GameStats): string[] {
   return Array.from(current);
 }
 
+export interface GameRecordResult {
+  scoreEarned: number;
+  newAchievements: Achievement[];
+  personaWasNew: boolean;
+}
+
 export function useGameStats() {
   const [stats, setStats] = useState<GameStats>(loadStats);
 
@@ -45,12 +52,24 @@ export function useGameStats() {
     } catch {}
   }, [stats]);
 
+  // day = giorno UTC del daily; null = practice (non tocca streak né score)
   const recordGame = useCallback(
-    (won: boolean, attempts: number, personaId: number): number => {
-      // Calcola il punteggio fuori da setStats per evitare problemi con StrictMode
-      const nextStreak = won ? stats.currentStreak + 1 : 0;
-      const scoreEarned = won ? calculateScore(attempts, nextStreak) : 0;
+    (
+      won: boolean,
+      attempts: number,
+      personaId: number,
+      day: number | null
+    ): GameRecordResult => {
+      const isDaily = day !== null;
+      // Calcola fuori da setStats per evitare doppie esecuzioni in StrictMode
+      let nextStreak = stats.currentStreak;
+      if (isDaily) {
+        nextStreak = won ? (stats.lastPlayedDay === day - 1 ? stats.currentStreak + 1 : 1) : 0;
+      }
+      const scoreEarned = won && isDaily ? calculateScore(attempts, nextStreak) : 0;
+      const personaWasNew = won && !stats.unlockedPersonaIds.includes(personaId);
 
+      let newAchievements: Achievement[] = [];
       setStats((prev) => {
         const next: GameStats = {
           ...prev,
@@ -60,23 +79,28 @@ export function useGameStats() {
         next.gamesPlayed++;
         if (won) {
           next.gamesWon++;
-          next.currentStreak = nextStreak;
-          next.maxStreak = Math.max(next.maxStreak, nextStreak);
           next.guessDistribution[Math.min(attempts - 1, 5)]++;
-          next.totalScore += scoreEarned;
           if (!next.unlockedPersonaIds.includes(personaId)) {
             next.unlockedPersonaIds.push(personaId);
           }
-        } else {
-          next.currentStreak = 0;
         }
+        if (isDaily) {
+          next.currentStreak = nextStreak;
+          next.maxStreak = Math.max(next.maxStreak, nextStreak);
+          next.totalScore += scoreEarned;
+          next.lastPlayedDay = day;
+        }
+        const before = new Set(prev.unlockedAchievements);
         next.unlockedAchievements = computeAchievements(next);
+        newAchievements = achievements.filter(
+          (a) => next.unlockedAchievements.includes(a.id) && !before.has(a.id)
+        );
         return next;
       });
 
-      return scoreEarned;
+      return { scoreEarned, newAchievements, personaWasNew };
     },
-    [stats.currentStreak]
+    [stats.currentStreak, stats.lastPlayedDay, stats.unlockedPersonaIds]
   );
 
   return { stats, recordGame };

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useModal } from "../hooks/useModal";
 import { BookOpen, Lock, X, ChevronLeft, Swords, ShieldCheck } from "lucide-react";
 import type { Persona } from "../types/Persona";
 import PersonaImage from "./PersonaImage";
@@ -18,6 +19,8 @@ const CompendiumModal = ({
 }: CompendiumModalProps) => {
   const [selected, setSelected] = useState<Persona | null>(null);
 
+  useModal(isOpen, onClose);
+
   if (!isOpen) return null;
 
   const sorted = [...personas].sort(
@@ -30,11 +33,11 @@ const CompendiumModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Compendium">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
 
       <div
-        className="relative border-4 border-[#FFF424] rounded-xl w-full max-w-2xl mx-3 shadow-2xl animate-slideUp overflow-hidden"
+        className="relative border-4 border-brand rounded-xl w-full max-w-2xl mx-3 shadow-2xl animate-slideUp overflow-hidden"
         style={{ backgroundColor: "#202020", maxHeight: "90vh" }}
       >
         {/* stripe top */}
@@ -52,14 +55,14 @@ const CompendiumModal = ({
             {selected ? (
               <button
                 onClick={() => setSelected(null)}
-                className="flex items-center gap-1 text-[#FFF424] hover:text-white transition-colors font-barlow font-bold text-sm tracking-widest"
+                className="flex items-center gap-1 text-brand hover:text-white transition-colors font-barlow font-bold text-sm tracking-widest"
               >
                 <ChevronLeft size={18} /> BACK
               </button>
             ) : (
               <>
-                <BookOpen className="text-[#FFF424]" size={20} />
-                <span className="font-cinzel text-[#FFF424] text-lg font-bold tracking-widest">
+                <BookOpen className="text-brand" size={20} />
+                <span className="font-cinzel text-brand text-lg font-bold tracking-widest">
                   COMPENDIUM
                 </span>
               </>
@@ -67,20 +70,21 @@ const CompendiumModal = ({
           </div>
           <div className="flex items-center gap-4">
             {!selected && (
-              <span className="font-barlow text-gray-500 text-sm tracking-wide">
-                <span className="text-[#FFF424] font-bold font-cinzel">
+              <span className="font-barlow text-gray-400 text-sm tracking-wide">
+                <span className="text-brand font-bold font-cinzel">
                   {unlockedIds.length}
                 </span>{" "}
                 / {personas.length}
               </span>
             )}
             {selected && (
-              <span className="font-cinzel text-[#FFF424] font-bold tracking-widest text-base">
+              <span className="font-cinzel text-brand font-bold tracking-widest text-base">
                 {selected.name.toUpperCase()}
               </span>
             )}
             <button
               onClick={handleClose}
+              aria-label="Close"
               className="text-gray-400 hover:text-white transition-colors"
             >
               <X size={22} />
@@ -109,7 +113,7 @@ const CompendiumModal = ({
         {/* GRID VIEW */}
         {!selected && (
           <div className="overflow-y-auto px-5 pb-5" style={{ maxHeight: "calc(90vh - 110px)" }}>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {sorted.map((persona) => {
                 const unlocked = unlockedIds.includes(persona.id);
                 return (
@@ -146,7 +150,7 @@ const CompendiumModal = ({
                         </div>
                         {/* label */}
                         <div
-                          className="font-barlow font-black text-center py-1.5 px-1 text-sm tracking-wide leading-tight transition-colors duration-150 group-hover:bg-[#FFF424] group-hover:text-black"
+                          className="font-barlow font-black text-center py-1.5 px-1 text-sm tracking-wide leading-tight transition-colors duration-150 group-hover:bg-brand group-hover:text-black"
                           style={{ background: "rgba(255,244,36,0.9)", color: "#000" }}
                         >
                           {persona.name.toUpperCase()}
@@ -177,7 +181,7 @@ const CompendiumModal = ({
               {/* immagine + badge */}
               <div className="flex flex-col items-center gap-3">
                 <div
-                  className="w-full rounded-xl border-4 border-[#FFF424] overflow-hidden relative"
+                  className="w-full rounded-xl border-4 border-brand overflow-hidden relative"
                   style={{ backgroundColor: "#111", aspectRatio: "4/5", maxWidth: 220 }}
                 >
                   <PersonaImage
@@ -201,7 +205,7 @@ const CompendiumModal = ({
                     {selected.arcana.toUpperCase()}
                   </span>
                   <span
-                    className="font-barlow font-bold text-xs tracking-widest px-3 py-1.5 rounded-full border-2 border-[#FFF424] text-[#FFF424]"
+                    className="font-barlow font-bold text-xs tracking-widest px-3 py-1.5 rounded-full border-2 border-brand text-brand"
                     style={{ background: "#111" }}
                   >
                     LV. {selected.level}
@@ -216,7 +220,7 @@ const CompendiumModal = ({
                   <div className="font-barlow text-gray-400 text-xs tracking-widest font-bold mb-1">
                     PERSONA
                   </div>
-                  <div className="font-cinzel text-[#FFF424] text-3xl font-black tracking-wide leading-tight">
+                  <div className="font-cinzel text-brand text-3xl font-black tracking-wide leading-tight">
                     {selected.name}
                   </div>
                 </div>
@@ -249,7 +253,7 @@ const CompendiumModal = ({
                         className="flex flex-col items-center rounded-lg py-2.5 border border-gray-700"
                         style={{ backgroundColor: "#111" }}
                       >
-                        <span className="font-cinzel text-[#FFF424] text-base font-black leading-none">
+                        <span className="font-cinzel text-brand text-base font-black leading-none">
                           {val}
                         </span>
                         <span className="font-barlow text-white text-xs tracking-wider mt-1.5 font-bold">
@@ -288,7 +292,7 @@ const CompendiumModal = ({
                       <div>
                         <div className="flex items-center gap-1.5 mb-2">
                           <ShieldCheck size={14} color="#FFF424" />
-                          <span className="font-barlow text-[#FFF424] text-sm tracking-widest font-bold">
+                          <span className="font-barlow text-brand text-sm tracking-widest font-bold">
                             RESISTS
                           </span>
                         </div>
@@ -296,7 +300,7 @@ const CompendiumModal = ({
                           {selected.resists.map((r) => (
                             <span
                               key={r}
-                              className="font-barlow font-black text-xs tracking-wide px-2.5 py-1 rounded border border-yellow-700 text-[#FFF424]"
+                              className="font-barlow font-black text-xs tracking-wide px-2.5 py-1 rounded border border-yellow-700 text-brand"
                               style={{ background: "#1a1a00" }}
                             >
                               {r.toUpperCase()}
